@@ -127,7 +127,7 @@ Selected: **random forest**. It is 0.017 above logistic regression, which is out
 
 ### Artifact
 
-- `artifacts/churn_pipeline.joblib`: the **fitted preprocessing + classifier** together (not in Git).
+- `artifacts/churn_pipeline.joblib`: the **fitted preprocessing + classifier** together (not in Git). It is published on the GitHub Release [tp02-model](https://github.com/Chanezig/ML-tp1/releases/tag/tp02-model). To use it without retraining, download `churn_pipeline.joblib` and `churn_pipeline.metadata.json` into `artifacts/`, then run `scripts/predict.py`.
 - `artifacts/churn_pipeline.metadata.json`, also copied to `evidence/tp02/model_metadata.json`: artifact SHA-256, source hash, seed, allocation hash, feature roles, preprocessing settings, parameters, validation metrics, threshold, Git commit and library versions.
 - `scripts/predict.py` checks the artifact hash against the metadata before loading. joblib uses pickle: **only load artifacts you trust**, with the same library versions (see the metadata).
 

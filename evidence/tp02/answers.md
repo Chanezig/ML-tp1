@@ -1,6 +1,8 @@
 # TP02 – Answers and evidence / Réponses et preuves
 
-Commit with the training code: `cbd7081` (branch `feat/tp02-training-pipeline`).
+Commit with the training code: `cbd7081` (branch `feat/tp02-training-pipeline`, tag `tp02-model`).
+Pull request: https://github.com/Chanezig/ML-tp1/pull/2, merged into `main` as `c74a0ab`.
+Artifact submission: GitHub Release https://github.com/Chanezig/ML-tp1/releases/tag/tp02-model, with `churn_pipeline.joblib` and `churn_pipeline.metadata.json`. I re-downloaded the file from the Release: same SHA-256, `0cde2a53…19080`.
 Configuration: `configs/tp02.json` (seed 42, threshold 0.5, selection rule fixed before running).
 
 ## 1. First model / Premier modèle
