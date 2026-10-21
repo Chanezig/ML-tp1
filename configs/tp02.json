@@ -1,0 +1,30 @@
+{
+  "seed": 42,
+  "split": {
+    "valid_size": 0.2,
+    "test_size": 0.2
+  },
+  "threshold": 0.5,
+  "selection": {
+    "metric": "average_precision",
+    "split": "valid",
+    "tie_tolerance": 0.01,
+    "rule": "Highest validation average precision. If another candidate is within tie_tolerance of the best, choose the simplest one according to simplicity_order.",
+    "simplicity_order": ["logistic_regression", "decision_tree", "random_forest"]
+  },
+  "candidates": {
+    "logistic_regression": {
+      "class": "LogisticRegression",
+      "params": {"max_iter": 1000}
+    },
+    "decision_tree": {
+      "class": "DecisionTreeClassifier",
+      "params": {"max_depth": 5, "min_samples_leaf": 20}
+    },
+    "random_forest": {
+      "class": "RandomForestClassifier",
+      "params": {"n_estimators": 300, "max_depth": 8, "min_samples_leaf": 10, "n_jobs": -1}
+    }
+  },
+  "artifact_path": "artifacts/churn_pipeline.joblib"
+}
