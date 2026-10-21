@@ -125,11 +125,27 @@ EN: On the first attempt, `uv sync --locked` succeeded but `import pandas` faile
 
 ## E – Git workflow
 
-- Repository: `<GITHUB_REPOSITORY_URL>`
-- Pull request: `<PR_URL>`
-- Initial commit: `<INITIAL_COMMIT_HASH>`
-- README merge commit: `<MERGE_COMMIT_HASH>`
-- Question du relecteur et ma réponse / Reviewer question and my answer: `<À COMPLÉTER APRÈS LA REVUE / TO FILL AFTER REVIEW>`
+- Repository: https://github.com/Chanezig/ML-tp1
+- Pull request: https://github.com/Chanezig/ML-tp1/pull/1
+- Initial commit: `038e73e` (Initialize Telco churn project)
+- PR commits: `a8eb281` (README), `4029149` (fix after review)
+- Merge commit on `main`: `1f0aac5` (Merge pull request #1)
+
+### Relecture / Review
+
+FR : Pas de binôme disponible : j'ai fait une **auto-relecture** (GitHub ne permet pas d'approuver sa propre PR, la relecture est donc un commentaire sur la PR).
+
+- **Question :** Puis-je reproduire la vérification des données depuis un environnement neuf en suivant uniquement le README ?
+- **Vérification :** clone neuf de `docs/telco-onboarding` dans un dossier vide, puis `uv sync --locked`, `download_data.py` et `inspect_telco.py`. `uv.lock` inchangé, `churnlab 0.1.0`, CSV retéléchargé depuis le commit IBM épinglé, SHA-256 correct, comptages identiques (7 043 / 21 / 5 174 / 1 869 / 0 / 11).
+- **Problème trouvé :** `download_data.py` réécrivait `recorded_at` à chaque exécution, donc `data/raw/telco.source.json` (versionné) apparaissait modifié après avoir suivi le README.
+- **Correction :** commit `4029149`, la métadonnée n'est réécrite que si le hash ou l'URL change. Re-testé depuis le clone neuf : l'arbre de travail reste propre. PR mergée ensuite.
+
+EN: No partner was available, so I did a **self-review** (GitHub does not allow approving your own PR, so the review is a PR comment).
+
+- **Question:** Can I reproduce the dataset check from a fresh environment by following only the README?
+- **Check:** fresh clone of `docs/telco-onboarding` in an empty folder, then `uv sync --locked`, `download_data.py`, `inspect_telco.py`. `uv.lock` unchanged, `churnlab 0.1.0`, CSV re-downloaded from the pinned IBM commit, SHA-256 correct, same counts (7,043 / 21 / 5,174 / 1,869 / 0 / 11).
+- **Issue found:** `download_data.py` rewrote `recorded_at` on every run, so the committed `data/raw/telco.source.json` showed as modified after following the README.
+- **Fix:** commit `4029149` rewrites the metadata only if the hash or URL changes. Re-tested from the fresh clone: the working tree stays clean. PR merged afterwards.
 
 ## F – Restore vs unstage
 
