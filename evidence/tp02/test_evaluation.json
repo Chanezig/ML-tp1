@@ -1,0 +1,17 @@
+{
+  "selected_model": "random_forest",
+  "artifact_sha256": "0cde2a53e7e0f56f32ad267d149c98a7690d57c2efd31ecb2f700d3ae0b19080",
+  "test_rows": 1409,
+  "note": "Single held-out evaluation after selection; not used for model choice.",
+  "average_precision": 0.634974538498811,
+  "roc_auc": 0.8317380970833655,
+  "precision": 0.6151202749140894,
+  "recall": 0.4786096256684492,
+  "f1": 0.5383458646616541,
+  "accuracy": 0.7821149751596878,
+  "threshold": 0.5,
+  "tn": 923,
+  "fp": 112,
+  "fn": 195,
+  "tp": 179
+}
