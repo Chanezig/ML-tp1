@@ -29,6 +29,14 @@ sha256 = hashlib.sha256(target.read_bytes()).hexdigest()
 if sha256 != EXPECTED_SHA256:
     raise ValueError(f"Source hash mismatch: got {sha256}")
 
+# Keep committed metadata stable: only rewrite it when it no longer describes the file.
+if metadata.exists():
+    existing = json.loads(metadata.read_text(encoding="utf-8"))
+    if existing.get("sha256") == sha256 and existing.get("source_url") == URL:
+        print(f"Metadata up to date in {metadata.as_posix()}")
+        print(json.dumps(existing, indent=2))
+        raise SystemExit(0)
+
 record = {
     "dataset": "IBM Telco Customer Churn",
     "source_repository": "https://github.com/IBM/telco-customer-churn-on-icp4d",
