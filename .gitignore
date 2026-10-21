@@ -1,0 +1,29 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+.venv-backup/
+.venv-backup-*/
+
+# Raw data snapshot (identified by data/raw/telco.source.json) and generated outputs
+data/raw/*.csv
+data/processed/*
+reports/
+artifacts/*
+*.pkl
+*.joblib
+mlruns/
+
+# Local state and secrets
+.env
+.env.*
+.ipynb_checkpoints/
+.DS_Store
+!data/processed/.gitkeep
+!artifacts/.gitkeep
