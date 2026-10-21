@@ -67,14 +67,14 @@ Commande / Command : `uv run python scripts/inspect_telco.py` (rapport copié da
 
 | Observation | Attendu / Expected | Obtenu / Obtained |
 |---|---:|---:|
-| SHA-256 | `16320c9c…3055e91` | `16320c9c…3055e91` ✅ |
-| Rows | 7 043 | 7 043 ✅ |
-| Columns | 21 | 21 ✅ |
-| `Churn = No` | 5 174 | 5 174 ✅ |
-| `Churn = Yes` | 1 869 | 1 869 ✅ |
-| Churn proportion | ≈ 26.54 % | 26.537 % ✅ |
-| Duplicate customer IDs | 0 | 0 ✅ |
-| Whitespace-only `TotalCharges` | 11 | 11 ✅ |
+| SHA-256 | `16320c9c…3055e91` | `16320c9c…3055e91`  |
+| Rows | 7 043 | 7 043  |
+| Columns | 21 | 21  |
+| `Churn = No` | 5 174 | 5 174 |
+| `Churn = Yes` | 1 869 | 1 869  |
+| Churn proportion | ≈ 26.54 % | 26.537 %  |
+| Duplicate customer IDs | 0 | 0  |
+| Whitespace-only `TotalCharges` | 11 | 11  |
 
 Source : `data/raw/telco.source.json` (dépôt IBM, commit `1fd6fd70906479be1712e64cfc0ea89f58466629`), produit par / produced by `scripts/download_data.py`.
 
