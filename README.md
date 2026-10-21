@@ -70,6 +70,67 @@ Models trained on it predict association with churn, not the effect of a retenti
 | `evidence/` | Submitted, non-sensitive evidence per TP |
 | `k8s/`, `pipelines/` | Deployment and orchestration (later TPs) |
 
+## Training pipeline (TP02)
+
+### Run it
+
+```sh
+uv sync --locked                          # includes pytest (dev dependency)
+uv run python scripts/download_data.py    # only if data/raw/telco.csv is absent
+uv run python scripts/first_model.py      # milestone 1: 2-feature model vs majority baseline
+uv run python scripts/train.py            # compare candidates on validation, save the selected pipeline
+uv run pytest -v                          # reliability checks (splits, leakage, missing values, reload)
+uv run python scripts/predict.py --input evidence/tp02/sample_batch.csv   # inference only, no fit
+uv run python scripts/evaluate_test.py    # ONCE, after selection: held-out test estimate
+```
+
+All settings (seed, split sizes, threshold, candidates and the selection rule) are in [configs/tp02.json](configs/tp02.json). They were fixed **before** looking at the results.
+
+### Task and data
+
+- Positive class: `Churn = Yes` → `1` (`No` → `0`). `customerID` is used only to identify customers and check splits; neither it nor `Churn` is a model input.
+- Split by customer, stratified on `Churn`, seed `42`: train 60 % (4,225) / validation 20 % (1,409) / test 20 % (1,409). The allocation is saved in `evidence/tp02/split_allocation.csv`.
+- Validation is used to compare candidates. The test set stays reserved and is evaluated once, after the choice is made.
+
+### Input schema
+
+| Feature | Type expected at inference | Rule |
+|---|---|---|
+| `tenure`, `MonthlyCharges`, `TotalCharges` | number (or numeric text) | blank / missing → NaN, then imputed with the **training** median; any other text (e.g. `"abc"`) → `ValueError` |
+| `Contract`, `InternetService`, `PaymentMethod` | text | blank / missing → `"missing"`; a category not seen in training is encoded as all zeros (ignored) |
+
+A missing column raises `ValueError`. Parsing is done by `churnlab.data.prepare_features` before the pipeline, identically for training and inference.
+
+### Pipeline
+
+`Pipeline(preprocessor → classifier)` built by `churnlab.pipeline.build_pipeline` (unfitted; it never reads or fits data):
+
+- numeric branch: `SimpleImputer(median)` → `StandardScaler`
+- categorical branch: `SimpleImputer(constant "missing")` → `OneHotEncoder(handle_unknown="ignore")`
+
+A single `fit` on the training features learns every statistic; validation and new data only call `predict` / `predict_proba`.
+
+### Comparison and selection (validation set)
+
+Selection metric chosen in advance: **average precision** of the class-1 probability. If a simpler model is within 0.01 of the best, the simpler model wins (logistic regression < decision tree < random forest). Threshold metrics use 0.5.
+
+| Model | Avg precision | ROC AUC | Precision | Recall | F1 | Accuracy |
+|---|---:|---:|---:|---:|---:|---:|
+| Majority baseline | 0.265 | 0.500 | 0.000 | 0.000 | 0.000 | 0.735 |
+| Logistic regression | 0.647 | 0.849 | 0.664 | 0.529 | 0.589 | 0.804 |
+| Decision tree (depth 5) | 0.617 | 0.838 | 0.636 | 0.602 | 0.618 | 0.803 |
+| **Random forest** (300 trees, depth 8) | **0.664** | 0.853 | 0.653 | 0.484 | 0.556 | 0.795 |
+
+Selected: **random forest**. It is 0.017 above logistic regression, which is outside the 0.01 tolerance. Full table: `evidence/tp02/comparison.csv`. Held-out test (evaluated once): AP 0.635, recall 0.479, accuracy 0.782.
+
+### Artifact
+
+- `artifacts/churn_pipeline.joblib`: the **fitted preprocessing + classifier** together (not in Git).
+- `artifacts/churn_pipeline.metadata.json`, also copied to `evidence/tp02/model_metadata.json`: artifact SHA-256, source hash, seed, allocation hash, feature roles, preprocessing settings, parameters, validation metrics, threshold, Git commit and library versions.
+- `scripts/predict.py` checks the artifact hash against the metadata before loading. joblib uses pickle: **only load artifacts you trust**, with the same library versions (see the metadata).
+
 ## What is not reproduced yet
 
-The lock file and the hash fix the package selections and the input bytes. They do **not** fix the OS, hardware or security policies, the label quality, or any training result: no model is trained in TP01.
+The lock file and the hash fix the package selections and the input bytes. They do **not** fix the OS, hardware or security policies, or the label quality.
+Training is deterministic for a given seed and environment (same artifact SHA-256 across runs). Random forest probabilities can still differ at about 1e-16 because of multithreaded summation, so reload checks use a 1e-12 tolerance.
+Probabilities are not calibrated: a score of 0.8 is not a measured 80 % risk. Runs are not tracked in an experiment store yet (next TP).

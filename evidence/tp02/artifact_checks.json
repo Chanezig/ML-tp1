@@ -1,0 +1,52 @@
+{
+  "artifact": "artifacts/churn_pipeline.joblib (selected random_forest)",
+  "numeric_features": [
+    "tenure",
+    "MonthlyCharges",
+    "TotalCharges"
+  ],
+  "learned_imputer_medians": [
+    29.0,
+    70.55,
+    1373.625
+  ],
+  "train_only_medians": [
+    29.0,
+    70.55,
+    1373.625
+  ],
+  "full_dataset_medians": [
+    29.0,
+    70.35,
+    1397.475
+  ],
+  "learned_scaler_means": [
+    32.44284023668639,
+    64.89450887573965,
+    2297.7652366863904
+  ],
+  "medians_unchanged_after_predict": true,
+  "blank_TotalCharges_per_split": {
+    "train": 7,
+    "valid": 1,
+    "test": 3
+  },
+  "categories_learned": {
+    "Contract": [
+      "Month-to-month",
+      "One year",
+      "Two year"
+    ],
+    "InternetService": [
+      "DSL",
+      "Fiber optic",
+      "No"
+    ],
+    "PaymentMethod": [
+      "Bank transfer (automatic)",
+      "Credit card (automatic)",
+      "Electronic check",
+      "Mailed check"
+    ]
+  }
+}

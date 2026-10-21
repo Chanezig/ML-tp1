@@ -1,0 +1,17 @@
+============================= test session starts =============================
+platform win32 -- Python 3.11.9, pytest-9.1.1, pluggy-1.7.0 -- C:\Users\chane\Documents\MASTER 2\machine learning operations\TP1 ML\churnlab-2026\.venv\Scripts\python.exe
+rootdir: C:\Users\chane\Documents\MASTER 2\machine learning operations\TP1 ML\churnlab-2026
+configfile: pyproject.toml
+collecting ... collected 9 items
+
+tests/test_tp02_checks.py::test_customer_ids_disjoint_and_complete PASSED [ 11%]
+tests/test_tp02_checks.py::test_split_is_reproducible_and_stratified PASSED [ 22%]
+tests/test_tp02_checks.py::test_imputer_medians_come_from_training_only PASSED [ 33%]
+tests/test_tp02_checks.py::test_prediction_does_not_refit PASSED         [ 44%]
+tests/test_tp02_checks.py::test_blank_numeric_is_imputed_with_training_median PASSED [ 55%]
+tests/test_tp02_checks.py::test_unseen_category_is_encoded_as_zeros PASSED [ 66%]
+tests/test_tp02_checks.py::test_malformed_numeric_text_fails_visibly PASSED [ 77%]
+tests/test_tp02_checks.py::test_missing_required_feature_fails_visibly PASSED [ 88%]
+tests/test_tp02_checks.py::test_reload_in_fresh_process_preserves_predictions PASSED [100%]
+
+============================== 9 passed in 6.85s ==============================
