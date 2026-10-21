@@ -6,6 +6,8 @@ Steps: load + verify the raw CSV, split by customer, fit the baseline and each
 candidate pipeline on train, compare on validation, apply the selection rule
 fixed in the config, save the selected fitted pipeline and its metadata.
 The test split is NOT evaluated here (see scripts/evaluate_test.py).
+Outputs (comparison, metadata copy, sample batch) go to reports/tp02/ unless
+--evidence-dir is given.
 """
 
 import argparse
@@ -36,7 +38,8 @@ from churnlab.pipeline import PREPROCESSING_SETTINGS, build_pipeline
 from churnlab.provenance import code_identity, environment_identity
 from churnlab.splits import allocation_table, split_customers
 
-EVIDENCE = Path("evidence/tp02")
+# Run outputs go to an ignored folder; pass --evidence-dir evidence/tp02 to refresh submitted evidence.
+DEFAULT_OUTPUT_DIR = Path("reports/tp02")
 ALLOCATION_PATH = Path("data/processed/split_allocation.csv")
 
 
@@ -77,6 +80,7 @@ def select_model(table: pd.DataFrame, selection: dict) -> tuple[str, str]:
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", type=Path, default=Path("configs/tp02.json"))
+    parser.add_argument("--evidence-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     args = parser.parse_args()
     config = load_config(args.config)
     seed, threshold = config["seed"], config["threshold"]
@@ -103,9 +107,10 @@ def main() -> None:
               f"F1={row['f1']:.4f} acc={row['accuracy']:.4f} fit={row['fit_seconds']}s")
 
     table = pd.DataFrame(rows)
-    EVIDENCE.mkdir(parents=True, exist_ok=True)
-    table.to_csv(EVIDENCE / "comparison.csv", index=False)
-    (EVIDENCE / "comparison.json").write_text(
+    out_dir = args.evidence_dir
+    out_dir.mkdir(parents=True, exist_ok=True)
+    table.to_csv(out_dir / "comparison.csv", index=False)
+    (out_dir / "comparison.json").write_text(
         json.dumps(rows, indent=2), encoding="utf-8"
     )
 
@@ -120,11 +125,11 @@ def main() -> None:
     # A small fixed batch (no target column) used to prove reload agreement.
     sample = splits["valid"].head(20)
     sample_features = sample[[ID_COLUMN, *NUMERIC_FEATURES, *CATEGORICAL_FEATURES]]
-    sample_features.to_csv(EVIDENCE / "sample_batch.csv", index=False)
+    sample_features.to_csv(out_dir / "sample_batch.csv", index=False)
     pd.DataFrame({
         ID_COLUMN: sample[ID_COLUMN].to_numpy(),
         "churn_probability": positive_scores(selected, prepare_features(sample)),
-    }).to_csv(EVIDENCE / "original_predictions.csv", index=False)
+    }).to_csv(out_dir / "original_predictions.csv", index=False)
 
     metadata = {
         "created_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
@@ -172,8 +177,8 @@ def main() -> None:
     }
     text = json.dumps(metadata, indent=2, default=str)
     artifact.with_suffix(".metadata.json").write_text(text, encoding="utf-8")
-    (EVIDENCE / "model_metadata.json").write_text(text, encoding="utf-8")
-    allocation.to_csv(EVIDENCE / "split_allocation.csv", index=False)
+    (out_dir / "model_metadata.json").write_text(text, encoding="utf-8")
+    allocation.to_csv(out_dir / "split_allocation.csv", index=False)
     print(f"Saved {artifact} (sha256 {metadata['artifact']['sha256'][:12]}...)")
 
 

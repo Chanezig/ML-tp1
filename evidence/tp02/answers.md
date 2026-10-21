@@ -147,9 +147,17 @@ Tests performed on copied inference batches:
 
 ## Peer review / Relecture
 
-No partner was available. I did a self-review from a fresh clone, following only the README.
-- Question: `<TO FILL AFTER REVIEW>`
-- Issue found and resolution: `<TO FILL AFTER REVIEW>`
+**FR :** Pas de binôme disponible : auto-relecture depuis un **clone neuf** de `feat/tp02-training-pipeline`, en suivant uniquement le README.
+- **Question :** Un autre ingénieur peut-il réentraîner et recharger l'artefact avec seulement le README ?
+- **Résultat :** `uv sync --locked`, `download_data.py`, `first_model.py`, `train.py`, `pytest` (9 passed), `predict.py`, `evaluate_test.py` fonctionnent tous. L'artefact obtenu a **le même SHA-256** (`0cde2a53…`), et les métriques de validation et de test sont identiques.
+- **Problème trouvé :** `train.py` réécrivait les fichiers de preuve versionnés (`evidence/tp02/comparison.*`, `model_metadata.json`, `original_predictions.csv`), à cause des temps d'entraînement, de la date et d'écarts d'environ 1e-16. L'arbre Git du relecteur devenait « modifié ».
+- **Correction :** les sorties vont par défaut dans `reports/tp02/` (ignoré par Git). Les preuves ne sont rafraîchies qu'avec `--evidence-dir evidence/tp02`. README mis à jour. Re-test : l'arbre reste propre.
+
+**EN:** No partner was available: self-review from a **fresh clone** of `feat/tp02-training-pipeline`, following only the README.
+- **Question:** Can another engineer retrain and reload the artifact using only the README?
+- **Result:** all commands work; the artifact has **the same SHA-256** (`0cde2a53…`) and identical validation/test metrics.
+- **Issue found:** `train.py` overwrote committed evidence files (fit times, timestamp, ~1e-16 differences), leaving the reviewer's working tree modified.
+- **Resolution:** outputs now default to the ignored `reports/tp02/`; evidence is refreshed only with `--evidence-dir evidence/tp02`. README updated. Re-tested: the working tree stays clean.
 
 ## Remaining limitations / Limites restantes
 

@@ -78,13 +78,15 @@ Models trained on it predict association with churn, not the effect of a retenti
 uv sync --locked                          # includes pytest (dev dependency)
 uv run python scripts/download_data.py    # only if data/raw/telco.csv is absent
 uv run python scripts/first_model.py      # milestone 1: 2-feature model vs majority baseline
-uv run python scripts/train.py            # compare candidates on validation, save the selected pipeline
+uv run python scripts/train.py            # compare candidates on validation, save the selected pipeline (outputs in reports/tp02/)
 uv run pytest -v                          # reliability checks (splits, leakage, missing values, reload)
 uv run python scripts/predict.py --input evidence/tp02/sample_batch.csv   # inference only, no fit
 uv run python scripts/evaluate_test.py    # ONCE, after selection: held-out test estimate
 ```
 
 All settings (seed, split sizes, threshold, candidates and the selection rule) are in [configs/tp02.json](configs/tp02.json). They were fixed **before** looking at the results.
+
+`train.py` writes its comparison table, metadata copy and sample batch to `reports/tp02/`, which Git ignores, so running it leaves the working tree clean. The submitted evidence in `evidence/tp02/` was produced with `--evidence-dir evidence/tp02` at commit `cbd7081`. You should get the same artifact SHA-256 (`0cde2a53…`), the same metrics, and different fit times.
 
 ### Task and data
 
